@@ -1,0 +1,9 @@
+https://editor-next.swagger.io/
+https://github.com/yandex-praktikum/java-explore-with-me
+
+DROP TABLE compilation_events;
+DROP TABLE compilations;
+DROP TABLE requests;
+DROP TABLE events;
+DROP TABLE users;
+DROP TABLE categories;
