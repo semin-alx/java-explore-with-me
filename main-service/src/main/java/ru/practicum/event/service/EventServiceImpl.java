@@ -1,5 +1,6 @@
 package ru.practicum.event.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
@@ -35,67 +37,6 @@ public class EventServiceImpl implements EventService {
     private final CategoryReposirory categoryReposirory;
     private final RequestRepository requestRepository;
     private final StatisticService statisticService;
-
-    public EventServiceImpl(EventRepository eventRepository,
-                            UserRepository userRepository,
-                            CategoryReposirory categoryReposirory,
-                            RequestRepository requestRepository,
-                            StatisticService statisticService) {
-
-        this.eventRepository = eventRepository;
-        this.userRepository = userRepository;
-        this.categoryReposirory = categoryReposirory;
-        this.requestRepository = requestRepository;
-        this.statisticService = statisticService;
-    }
-
-    private Event getAndCheckEvent(long eventId) {
-
-        Optional<Event> event = eventRepository.findById(eventId);
-
-        if (!event.isPresent()) {
-            throw new ObjectNotFoundException("Указанное событие в базе данных не найдено");
-        }
-
-        return event.get();
-
-    }
-
-    private Event getEventAndCheckOwner(long ownerId, long eventId) {
-
-        Event event = getAndCheckEvent(eventId);
-
-        if (!event.getOwner().getId().equals(ownerId)) {
-            throw new IncorrectActionException("Доступ/изменение информации чужого " +
-                                               "события запрещен");
-        }
-
-        return event;
-
-    }
-
-    // Получает с помощью EventMapper EventFullDto из Event
-    // и обогащает числом просмотров из статистики и числом подтвержденных запросов
-    private EventFullDto getFullDto(Event event) {
-        EventFullDto dto = EventMapper.toEventFullDto(event);
-        dto.setViews(statisticService.getEventViewCount(event.getId()));
-        dto.setConfirmedRequests(requestRepository.getConfirmCount(event.getId()));
-        return dto;
-    }
-
-    // Обогащает список EventShortDto, EventFullDto числом просмотров из статистики
-    // и числом подтвержденных запросов
-    private <T extends EventShortDto> void enrichDtoList(List<T> listDto) {
-
-        Set<Long> eventIds = listDto.stream().map(dto -> dto.getId()).collect(Collectors.toSet());
-        Map<Long, Long> stat = statisticService.getEventViewCount(eventIds);
-
-        listDto.stream().forEach(dto -> {
-            dto.setViews(stat.get(dto.getId()));
-            dto.setConfirmedRequests(requestRepository.getConfirmCount(dto.getId()));
-        });
-
-    }
 
     @Override
     public EventFullDto create(long ownerId, NewEventDto newEventDto) {
@@ -290,6 +231,60 @@ public class EventServiceImpl implements EventService {
         eventRepository.save(event);
 
         return getFullDto(event);
+
+    }
+
+    private Event getAndCheckEvent(long eventId) {
+
+        Optional<Event> event = eventRepository.findById(eventId);
+
+        if (!event.isPresent()) {
+            throw new ObjectNotFoundException("Указанное событие в базе данных не найдено");
+        }
+
+        return event.get();
+
+    }
+
+    private Event getEventAndCheckOwner(long ownerId, long eventId) {
+
+        Event event = getAndCheckEvent(eventId);
+
+        if (!event.getOwner().getId().equals(ownerId)) {
+            throw new IncorrectActionException("Доступ/изменение информации чужого " +
+                    "события запрещен");
+        }
+
+        return event;
+
+    }
+
+    /**
+     * Получает с помощью EventMapper EventFullDto из Event
+     * и обогащает числом просмотров из статистики и числом подтвержденных запросов
+     */
+    private EventFullDto getFullDto(Event event) {
+        EventFullDto dto = EventMapper.toEventFullDto(event);
+        dto.setViews(statisticService.getEventViewCount(event.getId()));
+        dto.setConfirmedRequests(requestRepository.getConfirmCount(event.getId()));
+        return dto;
+    }
+
+    /**
+     * Обогащает список EventShortDto, EventFullDto числом просмотров из статистики
+     * и числом подтвержденных запросов
+     * @param listDto - список обогащаемых объектов
+     * @param <T> - тип объекта, который будем обогащать (EventShortDto или наследник)
+     */
+    private <T extends EventShortDto> void enrichDtoList(List<T> listDto) {
+
+        Set<Long> eventIds = listDto.stream().map(dto -> dto.getId()).collect(Collectors.toSet());
+        Map<Long, Long> stat = statisticService.getEventViewCount(eventIds);
+
+        listDto.forEach(dto -> {
+            dto.setViews(stat.get(dto.getId()));
+            dto.setConfirmedRequests(requestRepository.getConfirmCount(dto.getId()));
+        });
 
     }
 

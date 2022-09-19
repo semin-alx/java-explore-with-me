@@ -1,5 +1,6 @@
 package ru.practicum.statistic;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,15 +18,11 @@ import java.util.stream.Collectors;
 
 
 @Service
+@RequiredArgsConstructor
 public class StatisticServiceImpl implements StatisticService {
 
     private final HttpStatisticClient httpStatisticClient;
     private final EventRepository eventRepository;
-
-    public StatisticServiceImpl(HttpStatisticClient httpStatisticClient, EventRepository eventRepository) {
-        this.httpStatisticClient = httpStatisticClient;
-        this.eventRepository = eventRepository;
-    }
 
     @Override
     public Map<Long, Long> getEventViewCount(Set<Long> eventIds) {
@@ -57,7 +54,7 @@ public class StatisticServiceImpl implements StatisticService {
         Map<Long, Long> result = eventIds.stream().collect(Collectors.toMap(l -> l, l -> 0L));
 
         // Прописываем число просмотров для тех событий, которые нашлись в статистике
-        viewStatsList.stream().forEach(vs -> {
+        viewStatsList.forEach(vs -> {
 
             Long eventId = uris.get(vs.getUri());
             Long viewCount = vs.getHits();

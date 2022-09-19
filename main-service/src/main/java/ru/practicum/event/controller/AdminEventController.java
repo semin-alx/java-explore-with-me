@@ -38,8 +38,8 @@ public class AdminEventController {
                 .users(users)
                 .states(states)
                 .categories(categories)
-                .rangeStart(DateTimeUtils.strToDateTime(rangeStart))
-                .rangeEnd(DateTimeUtils.strToDateTime(rangeEnd))
+                .rangeStart(DateTimeUtils.strIso8601toDateTime(rangeStart))
+                .rangeEnd(DateTimeUtils.strIso8601toDateTime(rangeEnd))
                 .build();
 
         return eventService.findEventsAsFull(filterParams, from, size);

@@ -23,7 +23,7 @@ public class Event {
     @Column(name = "annotation", nullable = false)
     private String annotation;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, length = 4000)
     private String description;
 
     @Column(name = "created", nullable = false)

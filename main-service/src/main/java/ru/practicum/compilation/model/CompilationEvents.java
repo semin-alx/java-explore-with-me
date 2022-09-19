@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.practicum.event.model.Event;
 
 import javax.persistence.*;
 
@@ -22,7 +23,8 @@ public class CompilationEvents {
     @Column(name = "comp_id")
     private Long compId;
 
-    @Column(name = "event_id")
-    private Long eventId;
+    @ManyToOne(optional = false)
+    @JoinColumn (name = "event_id")
+    private Event event;
 
 }

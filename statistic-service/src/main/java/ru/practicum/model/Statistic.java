@@ -20,13 +20,13 @@ public class Statistic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "app", nullable = false)
+    @Column(name = "app", nullable = false, length = 100)
     private String app;
 
     @Column(name = "uri", nullable = false)
     private String uri;
 
-    @Column(name = "ip", nullable = false)
+    @Column(name = "ip", nullable = false, length = 50)
     private String ip;
 
     @Column(name = "stat_time", nullable = false)

@@ -1,5 +1,6 @@
 package ru.practicum.category.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,13 +15,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryReposirory categoryRepository;
-
-    public CategoryServiceImpl(CategoryReposirory categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
 
     @Override
     public CategoryDto create(CategoryDto categoryDto) {

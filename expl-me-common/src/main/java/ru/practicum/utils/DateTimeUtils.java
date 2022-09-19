@@ -20,6 +20,14 @@ public class DateTimeUtils {
         }
     }
 
+    public static LocalDateTime strIso8601toDateTime(String value) {
+        if (value == null) {
+            return null;
+        } else {
+            return LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        }
+    }
+
     public static String dateTimeToStr(LocalDateTime value) {
 
         if (value == null) {

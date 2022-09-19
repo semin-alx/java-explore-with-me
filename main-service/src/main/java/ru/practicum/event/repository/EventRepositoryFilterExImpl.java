@@ -19,6 +19,28 @@ public class EventRepositoryFilterExImpl implements EventRepositoryFilterEx {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Override
+    public List<Event> findEx(EventFilterParams filterParams, EventSort sort, Pageable pageable) {
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Event> query = cb.createQuery(Event.class);
+        Root<Event> root = query.from(Event.class);
+
+        Predicate conditions = createFilter(root, cb, query, filterParams);
+
+        query.select(root).where(conditions);
+
+        if ((sort == null) || (sort == EventSort.EVENT_DATE)) {
+            query.orderBy(cb.asc(root.get("eventDate")));
+        }
+
+        return entityManager.createQuery(query)
+                .setFirstResult((int)pageable.getOffset())
+                .setMaxResults(pageable.getPageSize())
+                .getResultList();
+
+    }
+
     private Predicate createFilterByText(Root<Event> root, CriteriaBuilder cb, String text) {
 
         // Поиск по annotation или description без учета регистра букв
@@ -81,7 +103,7 @@ public class EventRepositoryFilterExImpl implements EventRepositoryFilterEx {
     }
 
     private Predicate createFilterByUsers(Root<Event> root, CriteriaBuilder cb,
-                                               Long[] users) {
+                                          Long[] users) {
 
         Predicate[] predicates = new Predicate[users.length];
 
@@ -93,7 +115,7 @@ public class EventRepositoryFilterExImpl implements EventRepositoryFilterEx {
     }
 
     private Predicate createFilterByStates(Root<Event> root, CriteriaBuilder cb,
-                                          EventState[] states) {
+                                           EventState[] states) {
 
         Predicate[] predicates = new Predicate[states.length];
 
@@ -146,28 +168,6 @@ public class EventRepositoryFilterExImpl implements EventRepositoryFilterEx {
         }
 
         return cb.and(predicateList.toArray(new Predicate[predicateList.size()]));
-
-    }
-
-    @Override
-    public List<Event> findEx(EventFilterParams filterParams, EventSort sort, Pageable pageable) {
-
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Event> query = cb.createQuery(Event.class);
-        Root<Event> root = query.from(Event.class);
-
-        Predicate conditions = createFilter(root, cb, query, filterParams);
-
-        query.select(root).where(conditions);
-
-        if ((sort == null) || (sort == EventSort.EVENT_DATE)) {
-            query.orderBy(cb.asc(root.get("eventDate")));
-        }
-
-        return entityManager.createQuery(query)
-                .setFirstResult((int)pageable.getOffset())
-                .setMaxResults(pageable.getPageSize())
-                .getResultList();
 
     }
 

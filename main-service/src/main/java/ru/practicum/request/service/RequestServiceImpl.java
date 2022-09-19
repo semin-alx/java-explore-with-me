@@ -1,5 +1,6 @@
 package ru.practicum.request.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.common.error_handling.exception.IncorrectActionException;
 import ru.practicum.common.error_handling.exception.ObjectNotFoundException;
@@ -18,51 +19,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class RequestServiceImpl implements RequestService {
 
     private final RequestRepository requestRepository;
     private final EventRepository eventRepository;
-
-    public RequestServiceImpl(RequestRepository requestRepository, EventRepository eventRepository) {
-        this.requestRepository = requestRepository;
-        this.eventRepository = eventRepository;
-    }
-
-    private Event getAndCheckEvent(long ownerId, Long eventId) {
-
-        Optional<Event> event = eventRepository.findById(eventId);
-
-        if (!event.isPresent()) {
-            throw new ObjectNotFoundException("Указанное событие не найдено");
-        }
-
-        if (!event.get().getOwner().getId().equals(ownerId)) {
-            throw new IncorrectActionException("Доступ к чужому событию запрещен");
-        }
-
-        return event.get();
-
-    }
-
-    private void checkRequestLimit(Event event) {
-        if (event.getParticipantLimit() > 0) {
-            if (event.getParticipantLimit() <= requestRepository.getConfirmCount(event.getId())) {
-                throw new IncorrectActionException("Достигнут лимит запросов на участие");
-            }
-        }
-    }
-
-    private Request getAndCheckRequest(Long requestId) {
-
-        Optional<Request> request = requestRepository.findById(requestId);
-
-        if (!request.isPresent()) {
-            throw new ObjectNotFoundException("Указанная заявка не найдена");
-        }
-
-        return request.get();
-
-    }
 
     @Override
     public ParticipationRequestDto createRequest(long userId, Long eventId) {
@@ -177,6 +138,42 @@ public class RequestServiceImpl implements RequestService {
         requestRepository.save(request);
 
         return RequestMapper.toParticipationRequestDto(request);
+    }
+
+    private Event getAndCheckEvent(long ownerId, Long eventId) {
+
+        Optional<Event> event = eventRepository.findById(eventId);
+
+        if (!event.isPresent()) {
+            throw new ObjectNotFoundException("Указанное событие не найдено");
+        }
+
+        if (!event.get().getOwner().getId().equals(ownerId)) {
+            throw new IncorrectActionException("Доступ к чужому событию запрещен");
+        }
+
+        return event.get();
+
+    }
+
+    private void checkRequestLimit(Event event) {
+        if (event.getParticipantLimit() > 0) {
+            if (event.getParticipantLimit() <= requestRepository.getConfirmCount(event.getId())) {
+                throw new IncorrectActionException("Достигнут лимит запросов на участие");
+            }
+        }
+    }
+
+    private Request getAndCheckRequest(Long requestId) {
+
+        Optional<Request> request = requestRepository.findById(requestId);
+
+        if (!request.isPresent()) {
+            throw new ObjectNotFoundException("Указанная заявка не найдена");
+        }
+
+        return request.get();
+
     }
 
 }

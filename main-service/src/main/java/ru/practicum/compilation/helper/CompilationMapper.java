@@ -3,7 +3,10 @@ package ru.practicum.compilation.helper;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.model.Compilation;
-import java.util.Set;
+import ru.practicum.event.dto.EventShortDto;
+import ru.practicum.event.helper.EventMapper;
+
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class CompilationMapper {
@@ -17,15 +20,15 @@ public class CompilationMapper {
 
     public static CompilationDto toCompilationDto(Compilation compilation) {
 
-        Set<Long> eventIds = compilation.getCompilationEvents().stream()
-                .map(o -> o.getEventId())
-                .collect(Collectors.toSet());
+        List<EventShortDto> events = compilation.getCompilationEvents().stream()
+                .map(o -> EventMapper.toEventShortDto(o.getEvent()))
+                .collect(Collectors.toList());
 
         return CompilationDto.builder()
                 .id(compilation.getId())
                 .pinned(compilation.getPinned())
                 .title(compilation.getTitle())
-                .events(eventIds)
+                .events(events)
                 .build();
     }
 

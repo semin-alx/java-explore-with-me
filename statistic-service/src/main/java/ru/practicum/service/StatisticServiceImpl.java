@@ -1,5 +1,6 @@
 package ru.practicum.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.helper.StatisticMapper;
 import ru.practicum.model.Statistic;
@@ -15,37 +16,11 @@ import java.util.Optional;
 
 import static ru.practicum.utils.DateTimeUtils.strToDateTime;
 
-
 @Service
+@RequiredArgsConstructor
 public class StatisticServiceImpl implements StatisticService {
 
     private final StatisticRepository statisticRepository;
-
-    public StatisticServiceImpl(StatisticRepository statisticRepository) {
-        this.statisticRepository = statisticRepository;
-    }
-
-    private Optional<ViewStats> getViewStatistic(LocalDateTime date1, LocalDateTime date2,
-                                                 String uri, boolean unique) {
-
-        StatisticInfo si = statisticRepository.getStatistic(date1, date2, uri);
-
-        if (si == null) {
-            return Optional.empty();
-        } else {
-
-            long count;
-
-            if (unique) {
-                count = si.getCountUniqIp();
-            } else {
-                count = si.getCountAll();
-            }
-
-            return Optional.of(new ViewStats(si.getAppName(), uri, count));
-        }
-
-    }
 
     @Override
     public void add(EndpointHit endpointHit) {
@@ -69,6 +44,28 @@ public class StatisticServiceImpl implements StatisticService {
         });
 
         return resultList;
+
+    }
+
+    private Optional<ViewStats> getViewStatistic(LocalDateTime date1, LocalDateTime date2,
+                                                 String uri, boolean unique) {
+
+        StatisticInfo si = statisticRepository.getStatistic(date1, date2, uri);
+
+        if (si == null) {
+            return Optional.empty();
+        } else {
+
+            long count;
+
+            if (unique) {
+                count = si.getCountUniqIp();
+            } else {
+                count = si.getCountAll();
+            }
+
+            return Optional.of(new ViewStats(si.getAppName(), uri, count));
+        }
 
     }
 

@@ -13,49 +13,6 @@ import java.time.format.DateTimeParseException;
 
 public class EventMapper {
 
-    private static LocalDateTime getDateTimeFromStr(String value, String jsonName) {
-
-        try {
-            return DateTimeUtils.strToDateTime(value);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException(String.format("Ошибка формата даты '%s': %s",
-                    jsonName,  e.getMessage()));
-        }
-
-    }
-
-    private static void prepareUpdateEvent(BaseUpdateEvent baseUpdateEvent, Event updateEvent) {
-
-        if (baseUpdateEvent.getAnnotation() != null) {
-            updateEvent.setAnnotation(baseUpdateEvent.getAnnotation());
-        }
-
-        if (baseUpdateEvent.getCategory() != null) {
-            updateEvent.setCategory(new Category(baseUpdateEvent.getCategory(), ""));
-        }
-
-        if (baseUpdateEvent.getTitle() != null) {
-            updateEvent.setTitle(baseUpdateEvent.getTitle());
-        }
-
-        if (baseUpdateEvent.getDescription() != null) {
-            updateEvent.setDescription(baseUpdateEvent.getDescription());
-        }
-
-        if (baseUpdateEvent.getEventDate() != null) {
-            updateEvent.setEventDate(getDateTimeFromStr(baseUpdateEvent.getEventDate(), "eventDate"));
-        }
-
-        if (baseUpdateEvent.getPaid() != null) {
-            updateEvent.setPaid(baseUpdateEvent.getPaid());
-        }
-
-        if (baseUpdateEvent.getParticipantLimit() != null) {
-            updateEvent.setParticipantLimit(baseUpdateEvent.getParticipantLimit());
-        }
-
-    }
-
     public static Event toEvent(NewEventDto newEventDto) {
 
         boolean paid = false;
@@ -143,6 +100,49 @@ public class EventMapper {
                 .title(event.getTitle())
                 .views(0L)
                 .build();
+
+    }
+
+    private static LocalDateTime getDateTimeFromStr(String value, String jsonName) {
+
+        try {
+            return DateTimeUtils.strToDateTime(value);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(String.format("Ошибка формата даты '%s': %s",
+                    jsonName,  e.getMessage()));
+        }
+
+    }
+
+    private static void prepareUpdateEvent(BaseUpdateEvent baseUpdateEvent, Event updateEvent) {
+
+        if (baseUpdateEvent.getAnnotation() != null) {
+            updateEvent.setAnnotation(baseUpdateEvent.getAnnotation());
+        }
+
+        if (baseUpdateEvent.getCategory() != null) {
+            updateEvent.setCategory(new Category(baseUpdateEvent.getCategory(), ""));
+        }
+
+        if (baseUpdateEvent.getTitle() != null) {
+            updateEvent.setTitle(baseUpdateEvent.getTitle());
+        }
+
+        if (baseUpdateEvent.getDescription() != null) {
+            updateEvent.setDescription(baseUpdateEvent.getDescription());
+        }
+
+        if (baseUpdateEvent.getEventDate() != null) {
+            updateEvent.setEventDate(getDateTimeFromStr(baseUpdateEvent.getEventDate(), "eventDate"));
+        }
+
+        if (baseUpdateEvent.getPaid() != null) {
+            updateEvent.setPaid(baseUpdateEvent.getPaid());
+        }
+
+        if (baseUpdateEvent.getParticipantLimit() != null) {
+            updateEvent.setParticipantLimit(baseUpdateEvent.getParticipantLimit());
+        }
 
     }
 
