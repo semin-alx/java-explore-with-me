@@ -227,6 +227,19 @@ public class EventServiceImpl implements EventService {
 
     }
 
+    @Override
+    public <T extends EventShortDto> void enrichDtoList(List<T> listDto) {
+
+        Set<Long> eventIds = listDto.stream().map(dto -> dto.getId()).collect(Collectors.toSet());
+        Map<Long, Long> stat = statisticService.getEventViewCount(eventIds);
+
+        listDto.forEach(dto -> {
+            dto.setViews(stat.get(dto.getId()));
+            dto.setConfirmedRequests(requestRepository.getConfirmCount(dto.getId()));
+        });
+
+    }
+
     private Event getAndCheckEvent(long eventId) {
 
         Event event = eventRepository.findById(eventId)
@@ -258,24 +271,6 @@ public class EventServiceImpl implements EventService {
         dto.setViews(statisticService.getEventViewCount(event.getId()));
         dto.setConfirmedRequests(requestRepository.getConfirmCount(event.getId()));
         return dto;
-    }
-
-    /**
-     * Обогащает список EventShortDto, EventFullDto числом просмотров из статистики
-     * и числом подтвержденных запросов
-     * @param listDto - список обогащаемых объектов
-     * @param <T> - тип объекта, который будем обогащать (EventShortDto или наследник)
-     */
-    private <T extends EventShortDto> void enrichDtoList(List<T> listDto) {
-
-        Set<Long> eventIds = listDto.stream().map(dto -> dto.getId()).collect(Collectors.toSet());
-        Map<Long, Long> stat = statisticService.getEventViewCount(eventIds);
-
-        listDto.forEach(dto -> {
-            dto.setViews(stat.get(dto.getId()));
-            dto.setConfirmedRequests(requestRepository.getConfirmCount(dto.getId()));
-        });
-
     }
 
 }
