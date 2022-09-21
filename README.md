@@ -2,16 +2,23 @@
 
 pull request
 --------------
-
 https://github.com/semin-alx/java-explore-with-me/pull/1
 
+Описание:
 
-Тесты для postman кривые, я там исправил мелкие недочеты
-и сохранил в java-explore-with-me\Docs\postman\fixed\main-service.json
+Приложение состоит из трех модулей:
+main-service - главный сервис
+statatistic-service - сервис статистики
+expl-me-common - модуль с общим функционалом
 
-Эти тесты локально проходят.
+Запуск осуществляется в 4 докерах
+1. главный сервис (main-service слушает порт 8080)
+2. сервис статистики (statatistic-service порт 9090)
+3. База данных главного сервиса
+4. База данных сервиса статистики
 
-Программа состоит из двух основных модулей main-service и statistic-service
-и одного дополнительного модуля expl-me-common где находится общая функциональность.
+Запуск осуществляется командами:
+mvn clean package
+docker-compose up
 
 

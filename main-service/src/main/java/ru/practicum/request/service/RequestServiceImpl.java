@@ -2,8 +2,8 @@ package ru.practicum.request.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.common.error_handling.exception.IncorrectActionException;
-import ru.practicum.common.error_handling.exception.ObjectNotFoundException;
+import ru.practicum.common.error.exception.IncorrectActionException;
+import ru.practicum.common.error.exception.ObjectNotFoundException;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.event.type.EventState;
@@ -15,7 +15,6 @@ import ru.practicum.request.repository.RequestRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,22 +27,19 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public ParticipationRequestDto createRequest(long userId, Long eventId) {
 
-        Optional<Event> event = eventRepository.findById(eventId);
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ObjectNotFoundException("Указанное событие не найдено"));
 
-        if (!event.isPresent()) {
-            throw new ObjectNotFoundException("Указанное событие не найдено");
-        }
-
-        if (event.get().getOwner().getId().equals(userId)) {
+        if (event.getOwner().getId().equals(userId)) {
             throw new IncorrectActionException("инициатор события не может добавить запрос " +
                                                "на участие в своём событии");
         }
 
-        if (event.get().getState() != EventState.PUBLISHED) {
+        if (event.getState() != EventState.PUBLISHED) {
             throw new IncorrectActionException("нельзя участвовать в неопубликованном событии");
         }
 
-        checkRequestLimit(event.get());
+        checkRequestLimit(event);
 
         Request newRequest = Request.builder()
                 .userId(userId)
@@ -52,7 +48,7 @@ public class RequestServiceImpl implements RequestService {
                 .status(RequestStatus.PENDING)
                 .build();
 
-        if (!event.get().getRequestModeration()) {
+        if (!event.getRequestModeration()) {
             newRequest.setStatus(RequestStatus.CONFIRMED);
         }
 
@@ -142,17 +138,14 @@ public class RequestServiceImpl implements RequestService {
 
     private Event getAndCheckEvent(long ownerId, Long eventId) {
 
-        Optional<Event> event = eventRepository.findById(eventId);
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ObjectNotFoundException("Указанное событие не найдено"));
 
-        if (!event.isPresent()) {
-            throw new ObjectNotFoundException("Указанное событие не найдено");
-        }
-
-        if (!event.get().getOwner().getId().equals(ownerId)) {
+        if (!event.getOwner().getId().equals(ownerId)) {
             throw new IncorrectActionException("Доступ к чужому событию запрещен");
         }
 
-        return event.get();
+        return event;
 
     }
 
@@ -166,13 +159,10 @@ public class RequestServiceImpl implements RequestService {
 
     private Request getAndCheckRequest(Long requestId) {
 
-        Optional<Request> request = requestRepository.findById(requestId);
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new ObjectNotFoundException("Указанная заявка не найдена"));
 
-        if (!request.isPresent()) {
-            throw new ObjectNotFoundException("Указанная заявка не найдена");
-        }
-
-        return request.get();
+        return request;
 
     }
 

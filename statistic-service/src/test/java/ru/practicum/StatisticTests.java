@@ -10,8 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.service.StatisticService;
-import ru.practicum.statistic_dto.EndpointHit;
-import ru.practicum.statistic_dto.ViewStats;
+import ru.practicum.statistic.dto.EndpointHit;
+import ru.practicum.statistic.dto.ViewStats;
 
 import javax.persistence.EntityManager;
 import java.util.List;

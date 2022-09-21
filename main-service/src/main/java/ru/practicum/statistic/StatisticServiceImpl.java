@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.practicum.common.error_handling.exception.StatisticServiceUnavailableException;
+import ru.practicum.common.error.exception.StatisticServiceUnavailableException;
 import ru.practicum.event.repository.EventRepository;
-import ru.practicum.statistic.http_client.HttpStatisticClient;
-import ru.practicum.statistic_dto.ViewStats;
+import ru.practicum.statistic.httpclient.HttpStatisticClient;
+import ru.practicum.statistic.dto.ViewStats;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;

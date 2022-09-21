@@ -1,4 +1,4 @@
-package ru.practicum.common.error_handling.exception;
+package ru.practicum.common.error.exception;
 
 public class IncorrectActionException extends RuntimeException {
     public IncorrectActionException(String message) {

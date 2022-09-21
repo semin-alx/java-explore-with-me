@@ -8,10 +8,9 @@ import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.helper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryReposirory;
-import ru.practicum.common.error_handling.exception.ObjectNotFoundException;
+import ru.practicum.common.error.exception.ObjectNotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,13 +48,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteById(long id) {
 
-        Optional<Category> category = categoryRepository.findById(id);
+        Category category = categoryRepository.findById(id)
+            .orElseThrow(() -> new ObjectNotFoundException("Категория с таким id в базе " +
+                                                           "не найдена"));
 
-        if (category.isPresent()) {
-            categoryRepository.deleteById(id);
-        } else {
-            throw new ObjectNotFoundException("Категория с таким id в базе не найдена");
-        }
+        categoryRepository.deleteById(id);
 
     }
 
@@ -69,14 +66,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getById(long catId) {
+        Category category = categoryRepository.findById(catId)
+                .orElseThrow(() -> new ObjectNotFoundException("Указанная категория не найдена"));
 
-        Optional<Category> category = categoryRepository.findById(catId);
-
-        if (!category.isPresent()) {
-            throw new ObjectNotFoundException("Указанная категория не найдена");
-        }
-
-        return CategoryMapper.toCategoryDto(category.get());
-
+        return CategoryMapper.toCategoryDto(category);
     }
 }

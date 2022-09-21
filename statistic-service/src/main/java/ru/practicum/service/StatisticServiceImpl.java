@@ -6,8 +6,8 @@ import ru.practicum.helper.StatisticMapper;
 import ru.practicum.model.Statistic;
 import ru.practicum.repository.StatisticInfo;
 import ru.practicum.repository.StatisticRepository;
-import ru.practicum.statistic_dto.EndpointHit;
-import ru.practicum.statistic_dto.ViewStats;
+import ru.practicum.statistic.dto.EndpointHit;
+import ru.practicum.statistic.dto.ViewStats;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,41 +31,32 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     public List<ViewStats> getStatistic(String start, String end, String[] uris, boolean unique) {
 
-        LocalDateTime date1 = strToDateTime(start);
-        LocalDateTime date2 = strToDateTime(end);
+        LocalDateTime dateStart = strToDateTime(start);
+        LocalDateTime dateEnd = strToDateTime(end);
 
         List<ViewStats> resultList = new ArrayList<>();
 
         Arrays.stream(uris).forEach(uri -> {
-            Optional<ViewStats> stat = getViewStatistic(date1, date2, uri, unique);
-            if (stat.isPresent()) {
-                resultList.add(stat.get());
-            }
+            Optional<ViewStats> stat = getViewStatistic(dateStart, dateEnd, uri, unique);
+            stat.ifPresent(resultList::add);
         });
 
         return resultList;
 
     }
 
-    private Optional<ViewStats> getViewStatistic(LocalDateTime date1, LocalDateTime date2,
+    private Optional<ViewStats> getViewStatistic(LocalDateTime start, LocalDateTime end,
                                                  String uri, boolean unique) {
 
-        StatisticInfo si = statisticRepository.getStatistic(date1, date2, uri);
+        StatisticInfo info = statisticRepository.getStatistic(start, end, uri);
 
-        if (si == null) {
+        if (info == null) {
             return Optional.empty();
-        } else {
-
-            long count;
-
-            if (unique) {
-                count = si.getCountUniqIp();
-            } else {
-                count = si.getCountAll();
-            }
-
-            return Optional.of(new ViewStats(si.getAppName(), uri, count));
         }
+
+        long count = unique ? info.getCountUniqIp() : info.getCountAll();
+
+        return Optional.of(new ViewStats(info.getAppName(), uri, count));
 
     }
 

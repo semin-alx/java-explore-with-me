@@ -1,13 +1,13 @@
-package ru.practicum.common.error_handling;
+package ru.practicum.common.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.common.error_handling.exception.IncorrectActionException;
-import ru.practicum.common.error_handling.exception.ObjectNotFoundException;
-import ru.practicum.common.error_handling.exception.StatisticServiceUnavailableException;
+import ru.practicum.common.error.exception.IncorrectActionException;
+import ru.practicum.common.error.exception.ObjectNotFoundException;
+import ru.practicum.common.error.exception.StatisticServiceUnavailableException;
 
 import javax.validation.ConstraintViolationException;
 import java.sql.SQLException;

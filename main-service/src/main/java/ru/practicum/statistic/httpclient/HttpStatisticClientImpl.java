@@ -1,4 +1,4 @@
-package ru.practicum.statistic.http_client;
+package ru.practicum.statistic.httpclient;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -8,8 +8,8 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.util.UriComponentsBuilder;
-import ru.practicum.statistic_dto.EndpointHit;
-import ru.practicum.statistic_dto.ViewStats;
+import ru.practicum.statistic.dto.EndpointHit;
+import ru.practicum.statistic.dto.ViewStats;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;

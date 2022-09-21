@@ -1,4 +1,4 @@
-package ru.practicum.common.error_handling;
+package ru.practicum.common.error;
 
 import lombok.Data;
 import org.springframework.http.HttpStatus;

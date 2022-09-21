@@ -18,7 +18,7 @@ public class Compilation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "pinned", nullable = true)
+    @Column(name = "pinned")
     private Boolean pinned;
 
     @Column(name = "title", nullable = false)
@@ -26,6 +26,6 @@ public class Compilation {
 
     @OneToMany
     @JoinColumn(name = "comp_id", insertable = false, updatable = false)
-    List<CompilationEvents> compilationEvents;
+    private List<CompilationEvents> compilationEvents;
 
 }

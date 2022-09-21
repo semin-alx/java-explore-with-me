@@ -4,14 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.practicum.common.error_handling.exception.ObjectNotFoundException;
+import ru.practicum.common.error.exception.ObjectNotFoundException;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.helper.UserMapper;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,15 +51,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteById(long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("Пользователь с таким id в базе не найден"));
 
-        Optional<User> user = userRepository.findById(id);
-
-        if (user.isPresent()) {
-            userRepository.deleteById(id);
-        } else {
-            throw new ObjectNotFoundException("Пользователь с таким id в базе не найден");
-        }
-
+        userRepository.deleteById(id);
     }
 
 }

@@ -6,8 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryReposirory;
-import ru.practicum.common.error_handling.exception.IncorrectActionException;
-import ru.practicum.common.error_handling.exception.ObjectNotFoundException;
+import ru.practicum.common.error.exception.IncorrectActionException;
+import ru.practicum.common.error.exception.ObjectNotFoundException;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.helper.EventMapper;
 import ru.practicum.event.model.Event;
@@ -24,7 +24,6 @@ import ru.practicum.utils.DateTimeUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,22 +40,16 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventFullDto create(long ownerId, NewEventDto newEventDto) {
 
-        Optional<User> owner = userRepository.findById(ownerId);
+        User owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new ObjectNotFoundException("Указанный пользователь в базе не найден"));
 
-        if (!owner.isPresent()) {
-            throw new ObjectNotFoundException("Указанный пользователь в базе не найден");
-        }
-
-        Optional<Category> category = categoryReposirory.findById(newEventDto.getCategory());
-
-        if (!owner.isPresent()) {
-            throw new ObjectNotFoundException("Указанная категория в базе не найдена");
-        }
+        Category category = categoryReposirory.findById(newEventDto.getCategory())
+                .orElseThrow(() -> new ObjectNotFoundException("Указанная категория в базе не найдена"));
 
         Event newEvent = EventMapper.toEvent(newEventDto);
 
-        newEvent.setOwner(owner.get());
-        newEvent.setCategory(category.get());
+        newEvent.setOwner(owner);
+        newEvent.setCategory(category);
 
         newEvent = eventRepository.save(newEvent);
 
@@ -236,13 +229,10 @@ public class EventServiceImpl implements EventService {
 
     private Event getAndCheckEvent(long eventId) {
 
-        Optional<Event> event = eventRepository.findById(eventId);
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ObjectNotFoundException("Указанное событие в базе данных не найдено"));
 
-        if (!event.isPresent()) {
-            throw new ObjectNotFoundException("Указанное событие в базе данных не найдено");
-        }
-
-        return event.get();
+        return event;
 
     }
 

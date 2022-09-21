@@ -15,27 +15,26 @@ public class DateTimeUtils {
     public static LocalDateTime strToDateTime(String value) {
         if (value == null) {
             return null;
-        } else {
-            return LocalDateTime.parse(value, formatter);
         }
+
+        return LocalDateTime.parse(value, formatter);
     }
 
     public static LocalDateTime strIso8601toDateTime(String value) {
         if (value == null) {
             return null;
-        } else {
-            return LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         }
+
+        return LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
     public static String dateTimeToStr(LocalDateTime value) {
 
         if (value == null) {
             return null;
-        } else {
-            return formatter.format(value);
         }
 
+        return formatter.format(value);
     }
 
 }

@@ -3,8 +3,8 @@ package ru.practicum.controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.service.StatisticService;
-import ru.practicum.statistic_dto.EndpointHit;
-import ru.practicum.statistic_dto.ViewStats;
+import ru.practicum.statistic.dto.EndpointHit;
+import ru.practicum.statistic.dto.ViewStats;
 
 import javax.validation.Valid;
 import java.util.List;

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.practicum.common.error_handling.exception.ObjectNotFoundException;
+import ru.practicum.common.error.exception.ObjectNotFoundException;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.helper.CompilationMapper;
@@ -17,7 +17,6 @@ import ru.practicum.event.repository.EventRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,7 +35,8 @@ public class CompilationServiceImpl implements CompilationService {
         final Compilation compSaved = compilationRepository.save(compNew);
 
         List<CompilationEvents> compilationEvents = newCompilationDto.getEvents().stream()
-                .map(eventId -> new CompilationEvents(null, compSaved.getId(), getEventById(eventId)))
+                .map(eventId -> new CompilationEvents(null, compSaved.getId(),
+                        getEventById(eventId)))
                 .collect(Collectors.toList());
 
         compilationEvents.forEach(o -> compilationEventsRepository.save(o));
@@ -48,47 +48,45 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    public CompilationDto findById(long compId) {
-        Compilation compilation = getAndCheck(compId);
+    public CompilationDto findById(long compilationId) {
+        Compilation compilation = getAndCheck(compilationId);
         return CompilationMapper.toCompilationDto(compilation);
     }
 
     @Override
-    public void deleteById(long compId) {
-        getAndCheck(compId);
-        compilationRepository.deleteById(compId);
+    public void deleteById(long compilationId) {
+        getAndCheck(compilationId);
+        compilationRepository.deleteById(compilationId);
     }
 
     @Override
-    public void deleteEvent(long compId, long eventId) {
+    public void deleteEvent(long compilationId, long eventId) {
 
-        Optional<CompilationEvents> ce =
-                compilationEventsRepository.findByCompIdAndEventId(compId, eventId);
+        CompilationEvents compilationEvents =
+                compilationEventsRepository.findByCompIdAndEventId(compilationId, eventId)
+                        .orElseThrow(() -> new ObjectNotFoundException("Указанное событие в " +
+                                "поборке не найдено"));
 
-        if (!ce.isPresent()) {
-            throw new ObjectNotFoundException("Указанное событие в поборке не найдено");
-        } else {
-            compilationEventsRepository.deleteById(ce.get().getId());
-        }
+        compilationEventsRepository.deleteById(compilationEvents.getId());
 
     }
 
     @Override
-    public void addEvent(long compId, long eventId) {
-        CompilationEvents ce = new CompilationEvents(null, compId, getEventById(eventId));
+    public void addEvent(long compilationId, long eventId) {
+        CompilationEvents ce = new CompilationEvents(null, compilationId, getEventById(eventId));
         compilationEventsRepository.save(ce);
     }
 
     @Override
-    public void disablePin(long compId) {
-        Compilation compilation = getAndCheck(compId);
+    public void disablePin(long compilationId) {
+        Compilation compilation = getAndCheck(compilationId);
         compilation.setPinned(false);
         compilationRepository.save(compilation);
     }
 
     @Override
-    public void enablePin(long compId) {
-        Compilation compilation = getAndCheck(compId);
+    public void enablePin(long compilationId) {
+        Compilation compilation = getAndCheck(compilationId);
         compilation.setPinned(true);
         compilationRepository.save(compilation);
     }
@@ -111,27 +109,13 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     private Compilation getAndCheck(Long compId) {
-
-        Optional<Compilation> compilation = compilationRepository.findById(compId);
-
-        if (!compilation.isPresent()) {
-            throw new ObjectNotFoundException("Указанная подборка не найдена");
-        }
-
-        return compilation.get();
-
+        return compilationRepository.findById(compId)
+                .orElseThrow(() -> new ObjectNotFoundException("Указанная подборка не найдена"));
     }
 
     private Event getEventById(Long eventId) {
-
-        Optional<Event> event = eventRepository.findById(eventId);
-
-        if (!event.isPresent()) {
-            throw new ObjectNotFoundException("Событие в подборке не найдено");
-        } else {
-            return event.get();
-        }
-
+        return eventRepository.findById(eventId)
+                .orElseThrow(() -> new ObjectNotFoundException("Событие в подборке не найдено"));
     }
 
 }

@@ -9,17 +9,17 @@ public interface CompilationService {
 
     CompilationDto create(NewCompilationDto newCompilationDto);
 
-    CompilationDto findById(long compId);
+    CompilationDto findById(long compilationId);
 
-    void deleteById(long compId);
+    void deleteById(long compilationId);
 
-    void deleteEvent(long compId, long eventId);
+    void deleteEvent(long compilationId, long eventId);
 
-    void addEvent(long compId, long eventId);
+    void addEvent(long compilationId, long eventId);
 
-    void disablePin(long compId);
+    void disablePin(long compilationId);
 
-    void enablePin(long compId);
+    void enablePin(long compilationId);
 
     List<CompilationDto> find(Boolean pinned, Integer from, Integer size);
 
