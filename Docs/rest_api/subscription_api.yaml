@@ -1,0 +1,167 @@
+openapi: 3.0.3
+info:
+  title: API REST подписки на друзей
+  version: 1.0.1
+servers:
+  - url: https://localhost:8080
+tags:
+  - name: subscription
+    description: Подписка на друзей
+paths:
+  /subscription/user/{userId}/friend/{friendId}:
+    post:
+      tags:
+        - subscription
+      summary: Создать подписку на друга
+      description: Создать подписку на друга
+      operationId: addSubscription
+      parameters:
+        - name: userId
+          in: path
+          description: Идентификатор пользователя, который создает подписку
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: friendId
+          in: path
+          description: Идентификатор друга на которого создается подписка
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешная операция
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionDto'          
+        '404':
+          description: Идентификатор пользователя или друга в базе не найден
+          
+  /subscription/user/{userId}:
+    get:
+      tags:
+        - subscription
+      summary: Посмотреть все подписки пользователя
+      description: Посмотреть все подписки пользователя
+      operationId: getSubscriptions
+      parameters:
+        - name: userId
+          in: path
+          description: Идентификатор пользователя подписки которого мы запрашиваем
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionDto'          
+        '404':
+          description: Пользователь в базе нен найден
+  /subscription/{id}:
+    delete:
+      tags:
+        - subscription
+      summary: Удалить подписку
+      description: Удалить подписку
+      operationId: delSubscription
+      parameters:
+        - name: id
+          in: path
+          description: Идентификатор подписки
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешная операция
+        '404':
+          description: Подписка в базе не найдена
+  /subscription/user/{userId}/events:
+    get:
+      tags:
+        - subscription
+      summary: Получить список событий, где участвуют подисанные друзья
+      description: Получить список событий, где участвуют подисанные друзья
+      operationId: getSubscriptionsByFriends
+      parameters:
+        - name: userId
+          in: path
+          description: Идентификатор пользователя подписки
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventShortDto'          
+        '404':
+          description: Пользователь в базе нен найден
+components:
+  schemas:
+    UserShortDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    CategoryDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    EventShortDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        annotation:
+          type: string
+        category:
+          $ref: '#/components/schemas/CategoryDto'
+        confirmedRequests:
+          type: integer
+          format: int64
+        eventDate:
+          type: string
+          description: yyyy-MM-dd hh:mm:ss
+        initiator:
+          $ref: '#/components/schemas/UserShortDto'
+        paid:
+          type: boolean
+        title:
+          type: string
+        views:
+          type: integer
+          format: int64
+    SubscriptionDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        user:
+          $ref: '#/components/schemas/UserShortDto'
+        friend:
+          $ref: '#/components/schemas/UserShortDto'
