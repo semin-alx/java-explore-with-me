@@ -31,4 +31,12 @@ public interface EventService {
 
     EventFullDto reject(long eventId);
 
+    /**
+     * Обогащает список EventShortDto, EventFullDto числом просмотров из статистики
+     * и числом подтвержденных запросов
+     * @param listDto - список обогащаемых объектов
+     * @param <T> - тип объекта, который будем обогащать (EventShortDto или наследник)
+     */
+    public <T extends EventShortDto> void enrichDtoList(List<T> listDto);
+
 }

@@ -1,10 +1,18 @@
 # java-explore-with-me
 
-pull request
---------------
-https://github.com/semin-alx/java-explore-with-me/pull/1
+Фича - подписка на друзей
 
-Описание:
+Подписка на друзей и возможность получать список актуальных событий, 
+в которых они принимают участие.
+
+Описание API находится в Docs/rest_api/subscription_api.yaml
+(Файл необходимо загрузить в https://editor-next.swagger.io)
+
+Весь код к фиче находится в main-service пакет ru.practicum.subscription
+
+-------
+
+Описание explore-with-me:
 
 Приложение состоит из трех модулей:
 main-service - главный сервис
@@ -18,7 +26,9 @@ expl-me-common - модуль с общим функционалом
 4. База данных сервиса статистики
 
 Запуск осуществляется командами:
+
 mvn clean package
+
 docker-compose up
 
 
