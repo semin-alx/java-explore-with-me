@@ -45,8 +45,8 @@ public class PublicEventController {
                 .text(text)
                 .categories(categories)
                 .paid(paid)
-                .rangeStart(DateTimeUtils.strIso8601toDateTime(rangeStart))
-                .rangeEnd(DateTimeUtils.strIso8601toDateTime(rangeEnd))
+                .rangeStart(DateTimeUtils.strToDateTime(rangeStart))
+                .rangeEnd(DateTimeUtils.strToDateTime(rangeEnd))
                 .onlyAvailable(onlyAvailable)
                 .build();
 
